@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -11,7 +10,7 @@ class XmlMongoDBExtensionTest extends AbstractMongoDBExtensionTest
 {
     protected function loadFromFile(ContainerBuilder $container, $file)
     {
-        $loadXml = new XmlFileLoader($container, new FileLocator(__DIR__.'/Fixtures/config/xml'));
-        $loadXml->load($file.'.xml');
+        $loadXml = new XmlFileLoader($container, new FileLocator(__DIR__ . '/Fixtures/config/xml'));
+        $loadXml->load($file . '.xml');
     }
 }

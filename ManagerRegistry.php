@@ -1,8 +1,8 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Symfony\Bridge\Doctrine\ManagerRegistry as BaseManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -10,6 +10,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ManagerRegistry extends BaseManagerRegistry
 {
+    /**
+     * @param object[]        $connections
+     * @param ObjectManager[] $managers
+     */
     public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName, ContainerInterface $container = null)
     {
         $parentTraits = class_uses(parent::class);

@@ -1,14 +1,15 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\Logger;
 
 use Doctrine\Bundle\MongoDBBundle\Logger\Logger;
-use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class LoggerTest extends TestCase
 {
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
     protected function setUp()
@@ -24,11 +25,11 @@ class LoggerTest extends TestCase
     public function testLogQuery()
     {
         $query = ['foo' => 'bar'];
-        $log = json_encode($query);
+        $log   = json_encode($query);
 
         $this->logger->expects($this->once())
             ->method('debug')
-            ->with('MongoDB query: '.$log);
+            ->with('MongoDB query: ' . $log);
 
         $logger = new Logger($this->logger);
         $logger->logQuery(['foo' => 'bar']);
@@ -37,12 +38,12 @@ class LoggerTest extends TestCase
     public function testMongoBinDataBase64Encoded()
     {
         $binData = new \MongoBinData('data', \MongoBinData::BYTE_ARRAY);
-        $query = ['foo' => ['binData' => $binData]];
-        $log = json_encode(['foo' => ['binData' => base64_encode($binData->bin)]]);
+        $query   = ['foo' => ['binData' => $binData]];
+        $log     = json_encode(['foo' => ['binData' => base64_encode($binData->bin)]]);
 
         $this->logger->expects($this->once())
             ->method('debug')
-            ->with('MongoDB query: '.$log);
+            ->with('MongoDB query: ' . $log);
 
         $logger = new Logger($this->logger);
         $logger->logQuery($query);
@@ -68,7 +69,7 @@ class LoggerTest extends TestCase
 
         $this->logger->expects($this->once())
             ->method('debug')
-            ->with('MongoDB query: '.$log);
+            ->with('MongoDB query: ' . $log);
 
         $logger = new Logger($this->logger);
         $logger->logQuery($query);

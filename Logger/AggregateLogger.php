@@ -1,27 +1,29 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Logger;
 
 /**
  * An aggregate query logger.
  *
- * @author Kris Wallsmith <kris@symfony.com>
  */
 class AggregateLogger implements LoggerInterface
 {
+    /** @var LoggerInterface[] */
     private $loggers;
 
     /**
      * Constructor.
      *
-     * @param array $loggers An array of LoggerInterface objects
+     * @param LoggerInterface[] $loggers An array of LoggerInterface objects
      */
     public function __construct(array $loggers)
     {
         $this->loggers = $loggers;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function logQuery(array $query)
     {
         foreach ($this->loggers as $logger) {

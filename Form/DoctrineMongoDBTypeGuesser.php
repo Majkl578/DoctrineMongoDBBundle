@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Form;
 
 use Doctrine\Bundle\MongoDBBundle\Form\Type\DocumentType;
@@ -17,19 +16,19 @@ use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\Guess;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Guess\ValueGuess;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Tries to guess form types according to ODM mappings
- *
- * @author Thibault Duplessis <thibault.duplessis@gmail.com>
  */
 class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
 {
+    /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var mixed[] */
     private $cache = [];
 
+    /** @var bool */
     private $typeFQCN;
 
     public function __construct(ManagerRegistry $registry)
@@ -43,7 +42,8 @@ class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
      */
     public function guessType($class, $property)
     {
-        if (!$ret = $this->getMetadata($class)) {
+        $ret = $this->getMetadata($class);
+        if (! $ret) {
             return new TypeGuess($this->typeFQCN ? TextType::class : 'text', [], Guess::LOW_CONFIDENCE);
         }
 
@@ -51,22 +51,21 @@ class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
 
         if ($metadata->hasAssociation($property)) {
             $multiple = $metadata->isCollectionValuedAssociation($property);
-            $mapping = $metadata->getFieldMapping($property);
+            $mapping  = $metadata->getFieldMapping($property);
 
             return new TypeGuess(
                 $this->typeFQCN ? DocumentType::class : 'document',
                 [
                     'class' => $mapping['targetDocument'],
                     'multiple' => $multiple,
-                    'expanded' => $multiple
+                    'expanded' => $multiple,
                 ],
                 Guess::HIGH_CONFIDENCE
             );
         }
 
         $fieldMapping = $metadata->getFieldMapping($property);
-        switch ($fieldMapping['type'])
-        {
+        switch ($fieldMapping['type']) {
             case 'collection':
                 return new TypeGuess(
                     $this->typeFQCN ? CollectionType::class : 'collection',
@@ -116,7 +115,7 @@ class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
     {
         $ret = $this->getMetadata($class);
         if ($ret && $ret[0]->hasField($property)) {
-            if (!$ret[0]->isNullable($property)) {
+            if (! $ret[0]->isNullable($property)) {
                 return new ValueGuess(
                     true,
                     Guess::HIGH_CONFIDENCE
@@ -136,14 +135,14 @@ class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
     public function guessMaxLength($class, $property)
     {
         $ret = $this->getMetadata($class);
-        if ($ret && $ret[0]->hasField($property) && !$ret[0]->hasAssociation($property)) {
+        if ($ret && $ret[0]->hasField($property) && ! $ret[0]->hasAssociation($property)) {
             $mapping = $ret[0]->getFieldMapping($property);
 
             if (isset($mapping['length'])) {
                 return new ValueGuess($mapping['length'], Guess::HIGH_CONFIDENCE);
             }
 
-            if ('float' === $mapping['type']) {
+            if ($mapping['type'] === 'float') {
                 return new ValueGuess(null, Guess::MEDIUM_CONFIDENCE);
             }
         }
@@ -162,10 +161,10 @@ class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
     public function guessPattern($class, $property)
     {
         $ret = $this->getMetadata($class);
-        if ($ret && $ret[0]->hasField($property) && !$ret[0]->hasAssociation($property)) {
+        if ($ret && $ret[0]->hasField($property) && ! $ret[0]->hasAssociation($property)) {
             $mapping = $ret[0]->getFieldMapping($property);
 
-            if ('float' === $mapping['type']) {
+            if ($mapping['type'] === 'float') {
                 return new ValueGuess(null, Guess::MEDIUM_CONFIDENCE);
             }
         }
@@ -187,4 +186,3 @@ class DoctrineMongoDBTypeGuesser implements FormTypeGuesserInterface
         }
     }
 }
-

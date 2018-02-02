@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Form\Type;
 
 use Doctrine\Bundle\MongoDBBundle\Form\ChoiceList\MongoDBQueryBuilderLoader;
@@ -12,14 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Form type for a MongoDB document
- *
- * @author Thibault Duplessis <thibault.duplessis@gmail.com>
- * @author Christophe Coevoet <stof@notk.org>
  */
 class DocumentType extends DoctrineType
 {
     /**
-     * @see Symfony\Bridge\Doctrine\Form\Type\DoctrineType::getLoader()
+     * @see \Symfony\Bridge\Doctrine\Form\Type\DoctrineType::getLoader()
      */
     public function getLoader(ObjectManager $manager, $queryBuilder, $class)
     {
@@ -30,18 +26,13 @@ class DocumentType extends DoctrineType
         );
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefaults([
-            'document_manager' => null,
-        ]);
+        $resolver->setDefaults(['document_manager' => null]);
 
-        $registry = $this->registry;
+        $registry   = $this->registry;
         $normalizer = function (Options $options, $manager) use ($registry) {
             if (isset($options['document_manager']) && $manager) {
                 throw new \InvalidArgumentException('You cannot set both an "em" and "document_manager" option.');
@@ -49,7 +40,7 @@ class DocumentType extends DoctrineType
 
             $manager = $options['document_manager'] ?: $manager;
 
-            if (null === $manager) {
+            if ($manager === null) {
                 return $registry->getManagerForClass($options['class']);
             }
 

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Logger;
 
 /**
@@ -8,10 +7,11 @@ namespace Doctrine\Bundle\MongoDBBundle\Logger;
  *
  * The {@link logQuery()} method must be configured as the logger callable in
  * the service container.
- *
- * @author Kris Wallsmith <kris@symfony.com>
  */
 interface LoggerInterface
 {
-    function logQuery(array $query);
+    /**
+     * @param mixed[] $query
+     */
+    public function logQuery(array $query);
 }

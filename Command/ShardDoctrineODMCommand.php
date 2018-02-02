@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Command;
 
 use Doctrine\ODM\MongoDB\Tools\Console\Command\Schema\ShardCommand;
@@ -11,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to shard database collections for a set of classes based on their
  * mappings.
- *
- * @author Paul Niedzielski <pawel@niedzielski.biz.pl>
  */
 class ShardDoctrineODMCommand extends ShardCommand
 {

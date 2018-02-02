@@ -6,9 +6,6 @@ use Doctrine\Bundle\MongoDBBundle\Command\LoadDataFixturesDoctrineODMCommand;
 use Doctrine\Common\DataFixtures\Loader;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Henrik Bjornskov <henrik@bjrnskov.dk>
- */
 class LoadDataFixturesDoctrineODMCommandTest extends TestCase
 {
     public function setUp()
@@ -27,7 +24,7 @@ class LoadDataFixturesDoctrineODMCommandTest extends TestCase
 
     public function testCommandIsEnabledWithDependency()
     {
-        if (!class_exists(Loader::class)) {
+        if (! class_exists(Loader::class)) {
             $this->markTestSkipped();
         }
 

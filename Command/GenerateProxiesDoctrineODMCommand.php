@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Command;
 
 use Doctrine\ODM\MongoDB\Tools\Console\Command\GenerateProxiesCommand;
@@ -10,9 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Generate the Doctrine ORM document proxies to your cache directory.
- *
- * @author Fabien Potencier <fabien@symfony.com>
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class GenerateProxiesDoctrineODMCommand extends GenerateProxiesCommand
 {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
@@ -11,7 +10,7 @@ class YamlMongoDBExtensionTest extends AbstractMongoDBExtensionTest
 {
     protected function loadFromFile(ContainerBuilder $container, $file)
     {
-        $loadYaml = new YamlFileLoader($container, new FileLocator(__DIR__.'/Fixtures/config/yml'));
-        $loadYaml->load($file.'.yml');
+        $loadYaml = new YamlFileLoader($container, new FileLocator(__DIR__ . '/Fixtures/config/yml'));
+        $loadYaml->load($file . '.yml');
     }
 }

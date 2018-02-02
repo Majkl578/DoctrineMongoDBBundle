@@ -1,19 +1,21 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Logger;
 
 use Psr\Log\LoggerInterface as PsrLogger;
 
 /**
  * A lightweight query logger.
- *
- * @author Kris Wallsmith <kris@symfony.com>
  */
 class Logger implements LoggerInterface
 {
+    /** @var PsrLogger */
     private $logger;
+
+    /** @var string */
     private $prefix;
+
+    /** @var int */
     private $batchInsertThreshold;
 
     public function __construct(PsrLogger $logger = null, $prefix = 'MongoDB query: ')
@@ -27,17 +29,20 @@ class Logger implements LoggerInterface
         $this->batchInsertThreshold = $batchInsertThreshold;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function logQuery(array $query)
     {
-        if (null === $this->logger) {
+        if ($this->logger === null) {
             return;
         }
 
-        if (isset($query['batchInsert']) && null !== $this->batchInsertThreshold && $this->batchInsertThreshold <= $query['num']) {
-            $query['data'] = '**'.$query['num'].' item(s)**';
+        if (isset($query['batchInsert']) && $this->batchInsertThreshold !== null && $this->batchInsertThreshold <= $query['num']) {
+            $query['data'] = '**' . $query['num'] . ' item(s)**';
         }
 
-        array_walk_recursive($query, function(&$value, $key) {
+        array_walk_recursive($query, function (&$value, $key) {
             if ($value instanceof \MongoBinData) {
                 $value = base64_encode($value->bin);
                 return;
@@ -52,6 +57,6 @@ class Logger implements LoggerInterface
             }
         });
 
-        $this->logger->debug($this->prefix.json_encode($query));
+        $this->logger->debug($this->prefix . json_encode($query));
     }
 }

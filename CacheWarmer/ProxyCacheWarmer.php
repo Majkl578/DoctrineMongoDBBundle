@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\CacheWarmer;
 
 use Doctrine\Common\Proxy\AbstractProxyFactory;
@@ -14,9 +13,6 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  *
  * In the process of generating proxies the cache for all the metadata is primed also,
  * since this information is necessary to build the proxies in the first place.
- *
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class ProxyCacheWarmer implements CacheWarmerInterface
 {
@@ -25,9 +21,6 @@ class ProxyCacheWarmer implements CacheWarmerInterface
      */
     private $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -47,15 +40,15 @@ class ProxyCacheWarmer implements CacheWarmerInterface
     {
         // we need the directory no matter the proxy cache generation strategy.
         $proxyCacheDir = $this->container->getParameter('doctrine_mongodb.odm.proxy_dir');
-        if (!file_exists($proxyCacheDir)) {
-            if (false === @mkdir($proxyCacheDir, 0775, true)) {
+        if (! file_exists($proxyCacheDir)) {
+            if (@mkdir($proxyCacheDir, 0775, true) === false) {
                 throw new \RuntimeException(sprintf('Unable to create the Doctrine Proxy directory (%s)', dirname($proxyCacheDir)));
             }
-        } else if (!is_writable($proxyCacheDir)) {
+        } elseif (! is_writable($proxyCacheDir)) {
             throw new \RuntimeException(sprintf('Doctrine Proxy directory (%s) is not writable for the current system user.', $proxyCacheDir));
         }
 
-        if (AbstractProxyFactory::AUTOGENERATE_NEVER !== $this->container->getParameter('doctrine_mongodb.odm.auto_generate_proxy_classes')) {
+        if ($this->container->getParameter('doctrine_mongodb.odm.auto_generate_proxy_classes') !== AbstractProxyFactory::AUTOGENERATE_NEVER) {
             return;
         }
 
@@ -69,14 +62,12 @@ class ProxyCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * @param DocumentManager $dm
-     *
      * @return ClassMetadata[]
      */
     private function getClassesForProxyGeneration(DocumentManager $dm)
     {
         return array_filter($dm->getMetadataFactory()->getAllMetadata(), function (ClassMetadata $metadata) {
-            return !$metadata->isEmbeddedDocument && !$metadata->isMappedSuperclass;
+            return ! $metadata->isEmbeddedDocument && ! $metadata->isMappedSuperclass;
         });
     }
 }

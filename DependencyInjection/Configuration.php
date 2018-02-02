@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\DependencyInjection;
 
 use Doctrine\Common\Proxy\AbstractProxyFactory;
@@ -13,8 +12,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * FrameworkExtension configuration structure.
- *
- * @author Ryan Weaver <ryan@thatsquality.com>
  */
 class Configuration implements ConfigurationInterface
 {
@@ -26,7 +23,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('doctrine_mongodb');
+        $rootNode    = $treeBuilder->root('doctrine_mongodb');
 
         $this->addDocumentManagersSection($rootNode);
         $this->addConnectionsSection($rootNode);
@@ -39,7 +36,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('auto_generate_proxy_classes')
                     ->defaultValue(AbstractProxyFactory::AUTOGENERATE_NEVER)
                     ->beforeNormalization()
-                    ->always(function($v) {
+                    ->always(function ($v) {
                         if ($v === false) {
                             return AbstractProxyFactory::AUTOGENERATE_NEVER;
                         } elseif ($v === true) {
@@ -54,7 +51,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('auto_generate_hydrator_classes')
                     ->defaultValue(ODMConfiguration::AUTOGENERATE_NEVER)
                     ->beforeNormalization()
-                    ->always(function($v) {
+                    ->always(function ($v) {
                         if ($v === false) {
                             return ODMConfiguration::AUTOGENERATE_NEVER;
                         } elseif ($v === true) {
@@ -70,8 +67,12 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('fixture_loader')
                     ->defaultValue(ContainerAwareLoader::class)
                     ->beforeNormalization()
-                        ->ifTrue(function($v) {return !($v == ContainerAwareLoader::class || in_array(ContainerAwareLoader::class, class_parents($v)));})
-                        ->then(function($v) { throw new \LogicException(sprintf("The %s class is not a subclass of the ContainerAwareLoader", $v));})
+                        ->ifTrue(function ($v) {
+                            return ! ($v === ContainerAwareLoader::class || in_array(ContainerAwareLoader::class, class_parents($v)));
+                        })
+                        ->then(function ($v) {
+                            throw new \LogicException(sprintf('The %s class is not a subclass of the ContainerAwareLoader', $v));
+                        })
                     ->end()
                 ->end()
                 ->scalarNode('default_document_manager')->end()
@@ -97,8 +98,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds the "document_managers" config section.
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
     private function addDocumentManagersSection(ArrayNodeDefinition $rootNode)
     {
@@ -134,12 +133,16 @@ class Configuration implements ConfigurationInterface
                                     ->fixXmlConfig('parameter')
                                     ->beforeNormalization()
                                         ->ifString()
-                                        ->then(function($v) { return ['class' => $v]; })
+                                        ->then(function ($v) {
+                                            return ['class' => $v];
+                                        })
                                     ->end()
                                     ->beforeNormalization()
                                         // The content of the XML node is returned as the "value" key so we need to rename it
-                                        ->ifTrue(function($v) {return is_array($v) && isset($v['value']); })
-                                        ->then(function($v) {
+                                        ->ifTrue(function ($v) {
+                                            return is_array($v) && isset($v['value']);
+                                        })
+                                        ->then(function ($v) {
                                             $v['class'] = $v['value'];
                                             unset($v['value']);
 
@@ -155,9 +158,13 @@ class Configuration implements ConfigurationInterface
                                             ->prototype('variable')
                                                 ->beforeNormalization()
                                                     // Detect JSON object and array syntax (for XML)
-                                                    ->ifTrue(function($v) { return is_string($v) && (preg_match('/\[.*\]/', $v) || preg_match('/\{.*\}/', $v)); })
+                                                    ->ifTrue(function ($v) {
+                                                        return is_string($v) && (preg_match('/\[.*\]/', $v) || preg_match('/\{.*\}/', $v));
+                                                    })
                                                     // Decode objects to associative arrays for consistency with YAML
-                                                    ->then(function($v) { return json_decode($v, true); })
+                                                    ->then(function ($v) {
+                                                        return json_decode($v, true);
+                                                    })
                                                 ->end()
                                             ->end()
                                         ->end()
@@ -170,7 +177,9 @@ class Configuration implements ConfigurationInterface
                                 ->addDefaultsIfNotSet()
                                 ->beforeNormalization()
                                     ->ifString()
-                                    ->then(function($v) { return ['type' => $v]; })
+                                    ->then(function ($v) {
+                                        return ['type' => $v];
+                                    })
                                 ->end()
                                 ->children()
                                     ->scalarNode('type')->defaultValue('array')->end()
@@ -190,7 +199,9 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('array')
                                     ->beforeNormalization()
                                         ->ifString()
-                                        ->then(function($v) { return ['type' => $v]; })
+                                        ->then(function ($v) {
+                                            return ['type' => $v];
+                                        })
                                     ->end()
                                     ->treatNullLike([])
                                     ->treatFalseLike(['mapping' => false])
@@ -214,8 +225,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds the "connections" config section.
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
     private function addConnectionsSection(ArrayNodeDefinition $rootNode)
     {
@@ -253,8 +262,10 @@ class Configuration implements ConfigurationInterface
                                         ->prototype('array')
                                             ->beforeNormalization()
                                                 // Handle readPreferenceTag XML nodes
-                                                ->ifTrue(function($v) { return isset($v['readPreferenceTag']); })
-                                                ->then(function($v) {
+                                                ->ifTrue(function ($v) {
+                                                    return isset($v['readPreferenceTag']);
+                                                })
+                                                ->then(function ($v) {
                                                     // Equivalent of fixXmlConfig() for inner node
                                                     if (isset($v['readPreferenceTag']['name'])) {
                                                         $v['readPreferenceTag'] = [$v['readPreferenceTag']];
@@ -272,7 +283,9 @@ class Configuration implements ConfigurationInterface
                                             ->ifNull()->thenUnset()
                                         ->end()
                                         ->validate()
-                                            ->ifTrue(function ($v) { return !is_string($v) && !is_null($v); })->thenInvalid('The replicaSet option must be a string or null.')
+                                            ->ifTrue(function ($v) {
+                                                return ! is_string($v) && ! is_null($v);
+                                            })->thenInvalid('The replicaSet option must be a string or null.')
                                         ->end()
                                     ->end()
                                     ->integerNode('socketTimeoutMS')->end()
@@ -289,8 +302,10 @@ class Configuration implements ConfigurationInterface
                                     ->integerNode('wTimeout')->info('Deprecated. Please use the "wTimeoutMS" option instead.')->end()
                                 ->end()
                                 ->validate()
-                                    ->ifTrue(function($v) { return count($v['readPreferenceTags']) === 0; })
-                                    ->then(function($v) {
+                                    ->ifTrue(function ($v) {
+                                        return count($v['readPreferenceTags']) === 0;
+                                    })
+                                    ->then(function ($v) {
                                         unset($v['readPreferenceTags']);
 
                                         return $v;
@@ -312,8 +327,6 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Adds the "resolve_target_documents" config section.
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
     private function addResolveTargetDocumentsSection(ArrayNodeDefinition $rootNode)
     {

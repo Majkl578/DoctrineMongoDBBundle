@@ -28,7 +28,8 @@ class Document
     /** @ODM\EmbedMany(targetDocument="Doctrine\Bundle\MongoDBBundle\Tests\Fixtures\Validator\EmbeddedDocument") */
     public $embedMany = [];
 
-    public function __construct($id) {
+    public function __construct($id)
+    {
         $this->id = $id;
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\Mapping\Driver;
 
 use Doctrine\Bundle\MongoDBBundle\Mapping\Driver\YamlDriver;
@@ -17,6 +16,9 @@ class YamlDriverTest extends AbstractDriverTest
         return __DIR__ . '/Fixtures/yml';
     }
 
+    /**
+     * @param mixed[] $prefixes
+     */
     protected function getDriver(array $prefixes = [])
     {
         return new YamlDriver($prefixes, $this->getFileExtension());

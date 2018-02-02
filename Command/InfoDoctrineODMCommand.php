@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
@@ -9,9 +8,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Show information about mapped documents
- *
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class InfoDoctrineODMCommand extends DoctrineODMCommand
 {
@@ -47,26 +43,29 @@ EOT
                                           ->getMetadataDriverImpl()
                                           ->getAllClassNames();
 
-        if (!$documentClassNames) {
+        if (! $documentClassNames) {
             throw new \Exception(
-                'You do not have any mapped Doctrine MongoDB ODM documents for any of your bundles. '.
-                'Create a class inside the Document namespace of any of your bundles and provide '.
-                'mapping information for it with Annotations directly in the classes doc blocks '.
+                'You do not have any mapped Doctrine MongoDB ODM documents for any of your bundles. ' .
+                'Create a class inside the Document namespace of any of your bundles and provide ' .
+                'mapping information for it with Annotations directly in the classes doc blocks ' .
                 'or with XML/YAML in your bundles Resources/config/doctrine/metadata/mongodb directory.'
             );
         }
 
-        $output->write(sprintf("Found <info>%d</info> documents mapped in document manager <info>%s</info>:\n",
-            count($documentClassNames), $documentManagerName), true);
+        $output->write(sprintf(
+            "Found <info>%d</info> documents mapped in document manager <info>%s</info>:\n",
+            count($documentClassNames),
+            $documentManagerName
+        ), true);
 
-        foreach ($documentClassNames AS $documentClassName) {
+        foreach ($documentClassNames as $documentClassName) {
             try {
                 $cm = $documentManager->getClassMetadata($documentClassName);
-                $output->write("<info>[OK]</info>   " . $documentClassName, true);
-            } catch(\Exception $e) {
-                $output->write("<error>[FAIL]</error> " . $documentClassName, true);
-                $output->write("<comment>" . $e->getMessage()."</comment>", true);
-                $output->write("", true);
+                $output->write('<info>[OK]</info>   ' . $documentClassName, true);
+            } catch (\Exception $e) {
+                $output->write('<error>[FAIL]</error> ' . $documentClassName, true);
+                $output->write('<comment>' . $e->getMessage() . '</comment>', true);
+                $output->write('', true);
             }
         }
     }

@@ -1,15 +1,11 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Mapping\Driver;
 
 use Doctrine\ODM\MongoDB\Mapping\Driver\SimplifiedYamlDriver as BaseYamlDriver;
 
 /**
  * YamlDriver that additionally looks for mapping information in a global file.
- *
- * @author Fabien Potencier <fabien@symfony.com>
- * @author Kris Wallsmith <kris@symfony.com>
  */
 class YamlDriver extends BaseYamlDriver
 {

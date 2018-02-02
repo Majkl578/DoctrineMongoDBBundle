@@ -1,20 +1,16 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Command;
 
 use Doctrine\Bundle\MongoDBBundle\Cursor\TailableCursorProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command helping to configure a daemon listening to a tailable cursor. Works only with capped collections.
- *
- * @author Jonathan H. Wage <jonwage@gmail.com>
- * @author Bilal Amarni <bilal.amarni@gmail.com>
  */
 class TailCursorDoctrineODMCommand extends ContainerAwareCommand
 {
@@ -33,27 +29,27 @@ class TailCursorDoctrineODMCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $dm = $this->getContainer()->get('doctrine_mongodb.odm.document_manager');
-        $repository = $dm->getRepository($input->getArgument('document'));
+        $dm                   = $this->getContainer()->get('doctrine_mongodb.odm.document_manager');
+        $repository           = $dm->getRepository($input->getArgument('document'));
         $repositoryReflection = new \ReflectionClass($repository);
-        $documentReflection = $repository->getDocumentManager()->getMetadataFactory()->getMetadataFor($input->getArgument('document'))->getReflectionClass();
-        $processor = $this->getContainer()->get($input->getArgument('processor'));
-        $sleepTime = $input->getOption('sleep-time');
+        $documentReflection   = $repository->getDocumentManager()->getMetadataFactory()->getMetadataFor($input->getArgument('document'))->getReflectionClass();
+        $processor            = $this->getContainer()->get($input->getArgument('processor'));
+        $sleepTime            = $input->getOption('sleep-time');
 
-        if (!$processor instanceof TailableCursorProcessorInterface) {
+        if (! $processor instanceof TailableCursorProcessorInterface) {
             throw new \InvalidArgumentException('A tailable cursor processor must implement the ProcessorInterface.');
         }
 
         $processorReflection = new \ReflectionClass($processor);
-        $method = $input->getArgument('finder');
+        $method              = $input->getArgument('finder');
 
         $output->writeln(sprintf('Getting cursor for <info>%s</info> from <info>%s#%s</info>', $input->getArgument('document'), $repositoryReflection->getShortName(), $method));
 
         $cursor = $repository->$method();
 
         while (true) {
-            while (!$cursor->hasNext()) {
-                if (!$cursor->valid()) {
+            while (! $cursor->hasNext()) {
+                if (! $cursor->valid()) {
                     $output->writeln('<error>Invalid cursor, requerying</error>');
                     $cursor = $repository->$method();
                 }
@@ -64,7 +60,7 @@ class TailCursorDoctrineODMCommand extends ContainerAwareCommand
 
             $cursor->next();
             $document = $cursor->current();
-            $id = $document->getId();
+            $id       = $document->getId();
 
             $output->writeln(sprintf('Processing <info>%s</info> with id of <info>%s</info>', $documentReflection->getShortName(), (string) $id));
             $output->writeln(sprintf('   <info>%s</info><comment>#</comment><info>process</info>(<info>%s</info> <comment>$document</comment>)', $processorReflection->getShortName(), $documentReflection->getShortName()));
@@ -76,7 +72,7 @@ class TailCursorDoctrineODMCommand extends ContainerAwareCommand
                 continue;
             }
 
-            if (!$input->getOption('no-flush')) {
+            if (! $input->getOption('no-flush')) {
                 $dm->flush();
             }
 

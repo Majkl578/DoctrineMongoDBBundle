@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\DataCollector;
 
 use Doctrine\Bundle\MongoDBBundle\DataCollector\PrettyDataCollector;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use PHPUnit\Framework\TestCase;
 
 class PrettyDataCollectorTest extends TestCase
 {
@@ -67,12 +66,10 @@ class PrettyDataCollectorTest extends TestCase
 
     public function testCollectLimit()
     {
-        $queries = [
+        $queries   = [
             [
                 'find' => true,
-                'query' => [
-                    'path' => '/',
-                ],
+                'query' => ['path' => '/'],
                 'fields' => [],
                 'db' => 'foo',
                 'collection' => 'Route',
@@ -92,15 +89,13 @@ class PrettyDataCollectorTest extends TestCase
             ],
             [
                 'limit' => true,
-                'limitNum' => NULL,
+                'limitNum' => null,
                 'query' => ['_id' => 'foo'],
                 'fields' => [],
             ],
             [
                 'find' => true,
-                'query' => [
-                    '_id' => '5506fa1580c7e1ee3c8b4c60',
-                ],
+                'query' => ['_id' => '5506fa1580c7e1ee3c8b4c60'],
                 'fields' => [],
                 'db' => 'foo',
                 'collection' => 'Group',
@@ -108,17 +103,13 @@ class PrettyDataCollectorTest extends TestCase
             [
                 'limit' => true,
                 'limitNum' => 1,
-                'query' => [
-                    '_id' => '5506fa1580c7e1ee3c8b4c60',
-                ],
+                'query' => ['_id' => '5506fa1580c7e1ee3c8b4c60'],
                 'fields' => [],
             ],
             [
                 'limit' => true,
-                'limitNum' => NULL,
-                'query' => [
-                    '_id' => '5506fa1580c7e1ee3c8b4c60',
-                ],
+                'limitNum' => null,
+                'query' => ['_id' => '5506fa1580c7e1ee3c8b4c60'],
                 'fields' => [],
             ],
         ];
@@ -126,7 +117,7 @@ class PrettyDataCollectorTest extends TestCase
             'use foo;',
             'db.Route.find({ "path": "/" });',
             'db.User.find({ "_id": "foo" }).limit(1);',
-            'db.Group.find({ "_id": "5506fa1580c7e1ee3c8b4c60" }).limit(1);'
+            'db.Group.find({ "_id": "5506fa1580c7e1ee3c8b4c60" }).limit(1);',
         ];
 
         $collector = new PrettyDataCollector();
@@ -141,12 +132,10 @@ class PrettyDataCollectorTest extends TestCase
 
     public function testQueryCountVsGridFsStoreFile()
     {
-        $queries = [
+        $queries   = [
             [
                 'count' => true,
-                'query' => [
-                    'path' => '/',
-                ],
+                'query' => ['path' => '/'],
                 'limit' => ['limit' => true, 'limitNum' => 5],
                 'skip' => ['skip' => true, 'limitSkip' => 0],
                 'options' => [],
@@ -179,7 +168,7 @@ class PrettyDataCollectorTest extends TestCase
 
     public function testCollectSort()
     {
-        $queries = [
+        $queries   = [
             [
                 'find' => true,
                 'query' => ['_id' => 'foo'],
@@ -195,9 +184,7 @@ class PrettyDataCollectorTest extends TestCase
             ],
             [
                 'find' => true,
-                'query' => [
-                    '_id' => '5506fa1580c7e1ee3c8b4c60',
-                ],
+                'query' => ['_id' => '5506fa1580c7e1ee3c8b4c60'],
                 'fields' => [],
                 'db' => 'foo',
                 'collection' => 'Group',
@@ -205,16 +192,14 @@ class PrettyDataCollectorTest extends TestCase
             [
                 'sort' => true,
                 'sortFields' => [],
-                'query' => [
-                    '_id' => '5506fa1580c7e1ee3c8b4c60',
-                ],
+                'query' => ['_id' => '5506fa1580c7e1ee3c8b4c60'],
                 'fields' => [],
             ],
         ];
         $formatted = [
             'use foo;',
             'db.User.find({ "_id": "foo" }).sort({ "name": 1, "city": -1 });',
-            'db.Group.find({ "_id": "5506fa1580c7e1ee3c8b4c60" }).sort({ });'
+            'db.Group.find({ "_id": "5506fa1580c7e1ee3c8b4c60" }).sort({ });',
         ];
 
         $collector = new PrettyDataCollector();
@@ -229,7 +214,7 @@ class PrettyDataCollectorTest extends TestCase
 
     public function testCollectSortAndLimit()
     {
-        $queries = [
+        $queries   = [
             [
                 'find' => true,
                 'query' => ['_id' => 'foo'],
@@ -267,7 +252,7 @@ class PrettyDataCollectorTest extends TestCase
 
     public function testCollectLimitAndSort()
     {
-        $queries = [
+        $queries   = [
             [
                 'find' => true,
                 'query' => ['_id' => 'foo'],
@@ -341,7 +326,6 @@ class PrettyDataCollectorTest extends TestCase
             'db.User.aggregate([ { "$group": { "_id": "$verified", "count": { "$sum": 1 } } } ]);',
             'db.User.aggregate([ { "$group": { "_id": "$verified", "count": { "$sum": 1 } } } ], { "group": true });',
         ];
-
 
         $collector = new PrettyDataCollector();
         foreach ($queries as $query) {

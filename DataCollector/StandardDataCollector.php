@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\DataCollector;
 
 use Doctrine\Bundle\MongoDBBundle\Logger\LoggerInterface;
@@ -10,11 +9,10 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 /**
  * Data collector for the Doctrine MongoDB ODM.
- *
- * @author Kris Wallsmith <kris@symfony.com>
  */
 class StandardDataCollector extends DataCollector implements LoggerInterface
 {
+    /** @var mixed[][] */
     protected $queries;
 
     public function __construct()
@@ -22,6 +20,9 @@ class StandardDataCollector extends DataCollector implements LoggerInterface
         $this->queries = [];
     }
 
+    /**
+     * @param mixed[] $query
+     */
     public function logQuery(array $query)
     {
         $this->queries[] = $query;
@@ -30,13 +31,13 @@ class StandardDataCollector extends DataCollector implements LoggerInterface
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->data['nb_queries'] = count($this->queries);
-        $this->data['queries'] = array_map('json_encode', $this->queries);
+        $this->data['queries']    = array_map('json_encode', $this->queries);
     }
 
     public function reset()
     {
         $this->queries = [];
-        $this->data = [
+        $this->data    = [
             'nb_queries' => 0,
             'queries' => [],
         ];

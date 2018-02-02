@@ -3,17 +3,20 @@
 namespace Doctrine\Bundle\MongoDBBundle\Tests\CacheWarmer;
 
 use Doctrine\Bundle\MongoDBBundle\CacheWarmer\PersistentCollectionCacheWarmer;
+use Doctrine\Bundle\MongoDBBundle\Tests\TestCase;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\PersistentCollection\PersistentCollectionGenerator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class PersistentCollectionCacheWarmerTest extends \Doctrine\Bundle\MongoDBBundle\Tests\TestCase
+class PersistentCollectionCacheWarmerTest extends TestCase
 {
     /** @var ContainerInterface */
     private $container;
 
+    /** @var PersistentCollectionGenerator|MockObject */
     private $generatorMock;
 
     /** @var PersistentCollectionCacheWarmer */

@@ -21,6 +21,10 @@ class Collections
     public $another;
 }
 
-class SomeCollection extends ArrayCollection {}
+class SomeCollection extends ArrayCollection
+{
+}
 
-class AnotherCollection extends ArrayCollection {}
+class AnotherCollection extends ArrayCollection
+{
+}

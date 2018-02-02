@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Command;
 
 use Doctrine\ODM\MongoDB\Tools\Console\Command\Schema\CreateCommand;
@@ -11,8 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to create the database schema for a set of classes based on their
  * mappings.
- *
- * @author Justin Hileman <justin@justinhileman.info>
  */
 class CreateSchemaDoctrineODMCommand extends CreateCommand
 {

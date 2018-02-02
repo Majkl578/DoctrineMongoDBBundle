@@ -5,7 +5,6 @@ namespace Doctrine\Bundle\MongoDBBundle\Tests\Fixtures\Form;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * @author Vladimir Chub <v@chub.com.ua>
  * @ODM\Document
  */
 class Guesser

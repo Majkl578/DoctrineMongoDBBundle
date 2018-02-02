@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\DependencyInjection;
 
 use Symfony\Bridge\Doctrine\DependencyInjection\AbstractDoctrineExtension;
@@ -10,40 +9,37 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Doctrine MongoDB ODM extension.
- *
- * @author Bulat Shakirzyanov <mallluhuct@gmail.com>
- * @author Kris Wallsmith <kris@symfony.com>
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class DoctrineMongoDBExtension extends AbstractDoctrineExtension
 {
     /**
      * Responds to the doctrine_mongodb configuration parameter.
+     *
+     * @param array $configs
      */
     public function load(array $configs, ContainerBuilder $container)
     {
         // Load DoctrineMongoDBBundle/Resources/config/mongodb.xml
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config        = $this->processConfiguration($configuration, $configs);
 
         $loader->load('mongodb.xml');
 
         if (empty($config['default_connection'])) {
-            $keys = array_keys($config['connections']);
+            $keys                         = array_keys($config['connections']);
             $config['default_connection'] = reset($keys);
         }
         $container->setParameter('doctrine_mongodb.odm.default_connection', $config['default_connection']);
 
         if (empty($config['default_document_manager'])) {
-            $keys = array_keys($config['document_managers']);
+            $keys                               = array_keys($config['document_managers']);
             $config['default_document_manager'] = reset($keys);
         }
         $container->setParameter('doctrine_mongodb.odm.default_document_manager', $config['default_document_manager']);
@@ -82,7 +78,7 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
     /**
      * Uses some of the extension options to override DI extension parameters.
      *
-     * @param array $options The available configuration options
+     * @param array            $options   The available configuration options
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
     protected function overrideParameters($options, ContainerBuilder $container)
@@ -102,7 +98,7 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
 
         foreach ($overrides as $key) {
             if (isset($options[$key])) {
-                $container->setParameter('doctrine_mongodb.odm.'.$key, $options[$key]);
+                $container->setParameter('doctrine_mongodb.odm.' . $key, $options[$key]);
 
                 // the option should not be used, the parameter should be referenced
                 unset($options[$key]);
@@ -115,9 +111,9 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
     /**
      * Loads the document managers configuration.
      *
-     * @param array $dmConfigs An array of document manager configs
-     * @param string $defaultDM The default document manager name
-     * @param string $defaultDB The default db name
+     * @param array            $dmConfigs An array of document manager configs
+     * @param string           $defaultDM The default document manager name
+     * @param string           $defaultDB The default db name
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
     protected function loadDocumentManagers(array $dmConfigs, $defaultDM, $defaultDB, ContainerBuilder $container)
@@ -139,16 +135,16 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
     /**
      * Loads a document manager configuration.
      *
-     * @param array $documentManager        A document manager configuration array
-     * @param string $defaultDM The default document manager name
-     * @param string $defaultDB The default db name
-     * @param ContainerBuilder $container A ContainerBuilder instance
+     * @param array            $documentManager A document manager configuration array
+     * @param string           $defaultDM       The default document manager name
+     * @param string           $defaultDB       The default db name
+     * @param ContainerBuilder $container       A ContainerBuilder instance
      */
     protected function loadDocumentManager(array $documentManager, $defaultDM, $defaultDB, ContainerBuilder $container)
     {
         $configServiceName = sprintf('doctrine_mongodb.odm.%s_configuration', $documentManager['name']);
-        $connectionName = isset($documentManager['connection']) ? $documentManager['connection'] : $documentManager['name'];
-        $defaultDatabase = isset($documentManager['database']) ? $documentManager['database'] : $defaultDB;
+        $connectionName    = isset($documentManager['connection']) ? $documentManager['connection'] : $documentManager['name'];
+        $defaultDatabase   = isset($documentManager['database']) ? $documentManager['database'] : $defaultDB;
 
         if ($container->hasDefinition($configServiceName)) {
             $odmConfigDef = $container->getDefinition($configServiceName);
@@ -196,7 +192,7 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
         // profiler
         if ($container->getParameterBag()->resolveValue($documentManager['profiler']['enabled'])) {
             $dataCollectorId = sprintf('doctrine_mongodb.odm.data_collector.%s', $container->getParameterBag()->resolveValue($documentManager['profiler']['pretty']) ? 'pretty' : 'standard');
-            $loggers[] = new Reference($dataCollectorId);
+            $loggers[]       = new Reference($dataCollectorId);
             $container
                 ->getDefinition($dataCollectorId)
                 ->addTag('data_collector', ['id' => 'mongodb', 'template' => '@DoctrineMongoDB/Collector/mongodb.html.twig'])
@@ -255,7 +251,7 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
             ->setConfigurator([new Reference($managerConfiguratorName), 'configure'])
         ;
 
-        if ($documentManager['name'] == $defaultDM) {
+        if ($documentManager['name'] === $defaultDM) {
             $container->setAlias(
                 'doctrine_mongodb.odm.document_manager',
                 new Alias(sprintf('doctrine_mongodb.odm.%s_document_manager', $documentManager['name']))
@@ -272,8 +268,8 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
     /**
      * Loads the configured connections.
      *
-     * @param array $config An array of connections configurations
-     * @param ContainerBuilder $container A ContainerBuilder instance
+     * @param array            $connections An array of connections configurations
+     * @param ContainerBuilder $container   A ContainerBuilder instance
      */
     protected function loadConnections(array $connections, ContainerBuilder $container)
     {
@@ -293,7 +289,7 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
                 new Reference($eventManagerId),
                 $this->normalizeDriverOptions($connection),
             ];
-            $odmConnDef = new Definition('%doctrine_mongodb.odm.connection.class%', $odmConnArgs);
+            $odmConnDef  = new Definition('%doctrine_mongodb.odm.connection.class%', $odmConnArgs);
             $odmConnDef->setPublic(true);
             $id = sprintf('doctrine_mongodb.odm.%s_connection', $name);
             $container->setDefinition($id, $odmConnDef);
@@ -351,14 +347,14 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
      * In the case of bundles everything is really optional (which leads to autodetection for this bundle) but
      * in the mappings key everything except alias is a required argument.
      *
-     * @param array $documentManager A configured ODM entity manager.
-     * @param Definition A Definition instance
-     * @param ContainerBuilder $container A ContainerBuilder instance
+     * @param array            $documentManager A configured ODM entity manager.
+     * @param Definition       $odmConfigDef    Definition A Definition instance
+     * @param ContainerBuilder $container       A ContainerBuilder instance
      */
     protected function loadDocumentManagerBundlesMappingInformation(array $documentManager, Definition $odmConfigDef, ContainerBuilder $container)
     {
         // reset state of drivers and alias map. They are only used by this methods and children.
-        $this->drivers = [];
+        $this->drivers  = [];
         $this->aliasMap = [];
 
         $this->loadMappingInformation($documentManager, $container);
@@ -368,7 +364,7 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
             // TODO: Can we make a method out of it on Definition? replaceMethodArguments() or something.
             $calls = $odmConfigDef->getMethodCalls();
             foreach ($calls as $call) {
-                if ($call[0] == 'setDocumentNamespaces') {
+                if ($call[0] === 'setDocumentNamespaces') {
                     $this->aliasMap = array_merge($call[1][0], $this->aliasMap);
                 }
             }
@@ -417,13 +413,14 @@ class DoctrineMongoDBExtension extends AbstractDoctrineExtension
      */
     public function getXsdValidationBasePath()
     {
-        return __DIR__.'/../Resources/config/schema';
+        return __DIR__ . '/../Resources/config/schema';
     }
 
     /**
      * Instantiate new ChildDefinition if available, otherwise fall back to deprecated DefinitionDecorator
      *
      * @param string $id service ID passed to ctor
+     *
      * @return ChildDefinition|DefinitionDecorator
      */
     private function getChildDefinitionOrDefinitionDecorator($id)

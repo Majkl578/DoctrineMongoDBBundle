@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\Driver\FileDriver;
@@ -25,9 +24,7 @@ abstract class AbstractDriverTest extends TestCase
 
     public function testFindMappingFileInSubnamespace()
     {
-        $driver = $this->getDriver([
-            $this->getFixtureDir() => 'MyNamespace\MyBundle\Document',
-        ]);
+        $driver = $this->getDriver([$this->getFixtureDir() => 'MyNamespace\MyBundle\Document']);
 
         $locator = $this->getDriverLocator($driver);
 
@@ -38,33 +35,34 @@ abstract class AbstractDriverTest extends TestCase
     }
 
     /**
-     * @expectedException Doctrine\Common\Persistence\Mapping\MappingException
+     * @expectedException \Doctrine\Common\Persistence\Mapping\MappingException
      */
     public function testFindMappingFileNamespacedFoundFileNotFound()
     {
-        $driver = $this->getDriver([
-            $this->getFixtureDir() => 'MyNamespace\MyBundle\Document',
-        ]);
+        $driver = $this->getDriver([$this->getFixtureDir() => 'MyNamespace\MyBundle\Document']);
 
         $locator = $this->getDriverLocator($driver);
         $locator->findMappingFile('MyNamespace\MyBundle\Document\Missing');
     }
 
     /**
-     * @expectedException Doctrine\Common\Persistence\Mapping\MappingException
+     * @expectedException \Doctrine\Common\Persistence\Mapping\MappingException
      */
     public function testFindMappingNamespaceNotFound()
     {
-        $driver = $this->getDriver([
-            $this->getFixtureDir() => 'MyNamespace\MyBundle\Document',
-        ]);
+        $driver = $this->getDriver([$this->getFixtureDir() => 'MyNamespace\MyBundle\Document']);
 
         $locator = $this->getDriverLocator($driver);
         $locator->findMappingFile('MyOtherNamespace\MyBundle\Document\Foo');
     }
 
     abstract protected function getFileExtension();
+
     abstract protected function getFixtureDir();
+
+    /**
+     * @param mixed[] $paths
+     */
     abstract protected function getDriver(array $paths = []);
 
     private function getDriverLocator(FileDriver $driver)

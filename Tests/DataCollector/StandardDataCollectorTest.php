@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\DataCollector;
 
 use Doctrine\Bundle\MongoDBBundle\DataCollector\StandardDataCollector;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use PHPUnit\Framework\TestCase;
 
 class StandardDataCollectorTest extends TestCase
 {

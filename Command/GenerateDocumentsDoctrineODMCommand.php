@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -10,9 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Generate document classes from mapping information
- *
- * @author Fabien Potencier <fabien@symfony.com>
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class GenerateDocumentsDoctrineODMCommand extends DoctrineODMCommand
 {
@@ -48,25 +44,27 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bundleName = $input->getArgument('bundle');
+        $bundleName     = $input->getArgument('bundle');
         $filterDocument = $input->getOption('document');
 
         $foundBundle = $this->findBundle($bundleName);
+        $metadatas   = $this->getBundleMetadatas($foundBundle);
 
-        if ($metadatas = $this->getBundleMetadatas($foundBundle)) {
+        if ($metadatas) {
             $output->writeln(sprintf('Generating documents for "<info>%s</info>"', $foundBundle->getName()));
             $documentGenerator = $this->getDocumentGenerator();
-            $documentGenerator->setBackupExisting(!$input->getOption('no-backup'));
+            $documentGenerator->setBackupExisting(! $input->getOption('no-backup'));
 
             foreach ($metadatas as $metadata) {
-                if ($filterDocument && $metadata->getReflectionClass()->getShortName() != $filterDocument) {
+                if ($filterDocument && $metadata->getReflectionClass()->getShortName() !== $filterDocument) {
                     continue;
                 }
 
                 if (strpos($metadata->name, $foundBundle->getNamespace()) === false) {
                     throw new \RuntimeException(
-                        "Document " . $metadata->name . " and bundle don't have a common namespace, ".
-                        "generation failed because the target directory cannot be detected.");
+                        'Document ' . $metadata->name . " and bundle don't have a common namespace, " .
+                        'generation failed because the target directory cannot be detected.'
+                    );
                 }
 
                 $output->writeln(sprintf('  > generating <comment>%s</comment>', $metadata->name));
@@ -74,8 +72,9 @@ EOT
             }
         } else {
             throw new \RuntimeException(
-                "Bundle " . $bundleName . " does not contain any mapped documents.".
-                "Did you maybe forget to define a mapping configuration?");
+                'Bundle ' . $bundleName . ' does not contain any mapped documents.' .
+                'Did you maybe forget to define a mapping configuration?'
+            );
         }
     }
 }

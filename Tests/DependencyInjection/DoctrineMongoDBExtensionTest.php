@@ -1,25 +1,26 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\DependencyInjection;
 
 use Doctrine\Bundle\MongoDBBundle\DependencyInjection\DoctrineMongoDBExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
-use PHPUnit\Framework\TestCase;
 
 class DoctrineMongoDBExtensionTest extends TestCase
 {
     public static function buildConfiguration(array $settings = [])
     {
-        return [array_merge(
-            [
-                'connections' => ['dummy' => []],
-                'document_managers' => ['dummy' => []],
-            ],
-            $settings
-        )];
+        return [
+            array_merge(
+                [
+                    'connections' => ['dummy' => []],
+                    'document_managers' => ['dummy' => []],
+                ],
+                $settings
+            ),
+        ];
     }
 
     public function buildMinimalContainer()
@@ -36,7 +37,7 @@ class DoctrineMongoDBExtensionTest extends TestCase
 
     public function testBackwardCompatibilityAliases()
     {
-        $loader = new DoctrineMongoDBExtension();
+        $loader                                              = new DoctrineMongoDBExtension();
         $loader->load(self::buildConfiguration(), $container = $this->buildMinimalContainer());
 
         $this->assertEquals('doctrine_mongodb.odm.document_manager', (string) $container->getAlias('doctrine.odm.mongodb.document_manager'));
@@ -53,7 +54,7 @@ class DoctrineMongoDBExtensionTest extends TestCase
         $loader = new DoctrineMongoDBExtension();
         $loader->load(self::buildConfiguration([$option => $value]), $container);
 
-        $this->assertEquals($value, $container->getParameter('doctrine_mongodb.odm.'.$parameter));
+        $this->assertEquals($value, $container->getParameter('doctrine_mongodb.odm.' . $parameter));
     }
 
     private function getContainer($bundles = 'YamlBundle')
@@ -62,9 +63,9 @@ class DoctrineMongoDBExtensionTest extends TestCase
 
         $map = [];
         foreach ($bundles as $bundle) {
-            require_once __DIR__.'/Fixtures/Bundles/'.$bundle.'/'.$bundle.'.php';
+            require_once __DIR__ . '/Fixtures/Bundles/' . $bundle . '/' . $bundle . '.php';
 
-            $map[$bundle] = 'DoctrineMongoDBBundle\Tests\DependencyInjection\Fixtures\Bundles\\'.$bundle.'\\'.$bundle;
+            $map[$bundle] = 'DoctrineMongoDBBundle\Tests\DependencyInjection\Fixtures\Bundles\\' . $bundle . '\\' . $bundle;
         }
 
         return new ContainerBuilder(new ParameterBag([
@@ -73,7 +74,7 @@ class DoctrineMongoDBExtensionTest extends TestCase
             'kernel.cache_dir'   => sys_get_temp_dir(),
             'kernel.environment' => 'test',
             'kernel.name'        => 'kernel',
-            'kernel.root_dir'    => __DIR__.'/../../' // src dir
+            'kernel.root_dir'    => __DIR__ . '/../../', // src dir
         ]));
     }
 
@@ -91,44 +92,32 @@ class DoctrineMongoDBExtensionTest extends TestCase
             [
                 [
                     'dm1' => [
-                        'mappings' => [
-                            'YamlBundle' => null
-                        ]
+                        'mappings' => ['YamlBundle' => null],
                     ],
                     'dm2' => [
-                        'mappings' => [
-                            'XmlBundle' => null
-                        ]
-                    ]
-                ]
+                        'mappings' => ['XmlBundle' => null],
+                    ],
+                ],
             ],
             [
                 [
-                    'dm1' => [
-                        'auto_mapping' => true
-                    ],
+                    'dm1' => ['auto_mapping' => true],
                     'dm2' => [
-                        'mappings' => [
-                            'XmlBundle' => null
-                        ]
-                    ]
-                ]
+                        'mappings' => ['XmlBundle' => null],
+                    ],
+                ],
             ],
             [
                 [
                     'dm1' => [
                         'auto_mapping' => true,
-                        'mappings' => [
-                            'YamlBundle' => null
-                        ]
+                        'mappings' => ['YamlBundle' => null],
                     ],
                     'dm2' => [
-                        'mappings' => [
-                            'XmlBundle' => null
-                        ]
-                    ]
-                ]
-            ]
+                        'mappings' => ['XmlBundle' => null],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -139,7 +128,7 @@ class DoctrineMongoDBExtensionTest extends TestCase
     {
         $container = $this->getContainer([
             'YamlBundle',
-            'XmlBundle'
+            'XmlBundle',
         ]);
 
         $loader = new DoctrineMongoDBExtension();
@@ -150,11 +139,13 @@ class DoctrineMongoDBExtensionTest extends TestCase
                     'default_database' => 'test_database',
                     'connections' => [
                         'cn1' => [],
-                        'cn2' => []
+                        'cn2' => [],
                     ],
-                    'document_managers' => $documentManagers
-                ]
-            ], $container);
+                    'document_managers' => $documentManagers,
+                ],
+            ],
+            $container
+        );
 
         $configDm1 = $container->getDefinition('doctrine_mongodb.odm.dm1_configuration');
         $configDm2 = $container->getDefinition('doctrine_mongodb.odm.dm2_configuration');
@@ -163,21 +154,21 @@ class DoctrineMongoDBExtensionTest extends TestCase
             [
                 'setDocumentNamespaces',
                 [
-                    [
-                        'YamlBundle' => 'DoctrineMongoDBBundle\Tests\DependencyInjection\Fixtures\Bundles\YamlBundle\Document'
-                    ]
-                ]
-            ], $configDm1->getMethodCalls());
+                    ['YamlBundle' => 'DoctrineMongoDBBundle\Tests\DependencyInjection\Fixtures\Bundles\YamlBundle\Document'],
+                ],
+            ],
+            $configDm1->getMethodCalls()
+        );
 
         $this->assertContains(
             [
                 'setDocumentNamespaces',
                 [
-                    [
-                        'XmlBundle' => 'DoctrineMongoDBBundle\Tests\DependencyInjection\Fixtures\Bundles\XmlBundle\Document'
-                    ]
-                ]
-            ], $configDm2->getMethodCalls());
+                    ['XmlBundle' => 'DoctrineMongoDBBundle\Tests\DependencyInjection\Fixtures\Bundles\XmlBundle\Document'],
+                ],
+            ],
+            $configDm2->getMethodCalls()
+        );
     }
 
     public function testFactoriesAreRegistered()
@@ -191,34 +182,41 @@ class DoctrineMongoDBExtensionTest extends TestCase
                     'default_database' => 'test_database',
                     'connections' => [
                         'cn1' => [],
-                        'cn2' => []
+                        'cn2' => [],
                     ],
                     'document_managers' => [
                         'dm1' => [
                             'repository_factory' => 'repository_factory_service',
                             'persistent_collection_factory' => 'persistent_collection_factory_service',
-                        ]
-                    ]
-                ]
-            ], $container);
+                        ],
+                    ],
+                ],
+            ],
+            $container
+        );
 
         $configDm1 = $container->getDefinition('doctrine_mongodb.odm.dm1_configuration');
         $this->assertContains(
             [
                 'setRepositoryFactory',
-                [new Reference('repository_factory_service')]
-            ], $configDm1->getMethodCalls());
+                [new Reference('repository_factory_service')],
+            ],
+            $configDm1->getMethodCalls()
+        );
         $this->assertContains(
             [
                 'setPersistentCollectionFactory',
-                [new Reference('persistent_collection_factory_service')]
-            ], $configDm1->getMethodCalls());
+                [new Reference('persistent_collection_factory_service')],
+            ],
+            $configDm1->getMethodCalls()
+        );
     }
 
     public function testPublicServicesAndAliases()
     {
-        $loader = new DoctrineMongoDBExtension();
-        $loader->load(self::buildConfiguration(), $container = $this->buildMinimalContainer());
+        $loader    = new DoctrineMongoDBExtension();
+        $container = $this->buildMinimalContainer();
+        $loader->load(self::buildConfiguration(), $container);
 
         $this->assertTrue($container->getDefinition('doctrine_mongodb')->isPublic());
         $this->assertTrue($container->getDefinition('doctrine_mongodb.odm.dummy_document_manager')->isPublic());

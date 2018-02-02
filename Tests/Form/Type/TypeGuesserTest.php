@@ -2,19 +2,15 @@
 
 namespace Doctrine\Bundle\MongoDBBundle\Tests\Form\Type;
 
+use Doctrine\Bundle\MongoDBBundle\Form\DoctrineMongoDBExtension;
 use Doctrine\Bundle\MongoDBBundle\Tests\Fixtures\Form\Category;
 use Doctrine\Bundle\MongoDBBundle\Tests\Fixtures\Form\Document;
 use Doctrine\Bundle\MongoDBBundle\Tests\Fixtures\Form\Guesser;
 use Doctrine\Bundle\MongoDBBundle\Tests\TestCase;
-use Doctrine\Bundle\MongoDBBundle\Form\DoctrineMongoDBExtension;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Test\TypeTestCase;
-use Symfony\Component\HttpKernel\Kernel;
 
-/**
- * @author Vladimir Chub <v@chub.com.ua>
- */
 class TypeGuesserTest extends TypeTestCase
 {
     /**
@@ -27,13 +23,16 @@ class TypeGuesserTest extends TypeTestCase
      */
     private $dmRegistry;
 
+    /**
+     * @var bool
+     */
     private $typeFQCN;
 
     public function setUp()
     {
         $this->typeFQCN = method_exists(AbstractType::class, 'getBlockPrefix');
 
-        $this->dm = TestCase::createTestDocumentManager([
+        $this->dm         = TestCase::createTestDocumentManager([
             __DIR__ . '/../../Fixtures/Form/Guesser',
         ]);
         $this->dmRegistry = $this->createRegistryMock('default', $this->dm);

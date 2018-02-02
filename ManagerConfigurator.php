@@ -1,29 +1,21 @@
 <?php
 
-/*
- * This file is part of the Doctrine MongoDB Bundle
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Doctrine\Bundle\MongoDBBundle;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 
 /**
  * Configurator for an DocumentManager
- *
- * @author Wesley van Opdorp <wesley.van.opdorp@freshheads.com>
  */
 class ManagerConfigurator
 {
+    /** @var string[] */
     private $enabledFilters = [];
 
     /**
      * Construct.
      *
-     * @param array $enabledFilters
+     * @param string[] $enabledFilters
      */
     public function __construct(array $enabledFilters)
     {
@@ -32,8 +24,6 @@ class ManagerConfigurator
 
     /**
      * Create a connection by name.
-     *
-     * @param DocumentManager $documentManager
      */
     public function configure(DocumentManager $documentManager)
     {
@@ -42,10 +32,6 @@ class ManagerConfigurator
 
     /**
      * Enable filters for an given document manager
-     *
-     * @param DocumentManager $documentManager
-     *
-     * @return null
      */
     private function enableFilters(DocumentManager $documentManager)
     {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle\Tests\Mapping\Driver;
 
 use Doctrine\Bundle\MongoDBBundle\Mapping\Driver\XmlDriver;
@@ -17,6 +16,9 @@ class XmlDriverTest extends AbstractDriverTest
         return __DIR__ . '/Fixtures/xml';
     }
 
+    /**
+     * @param mixed[] $prefixes
+     */
     protected function getDriver(array $prefixes = [])
     {
         return new XmlDriver($prefixes, $this->getFileExtension());

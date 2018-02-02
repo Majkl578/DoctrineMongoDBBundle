@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Doctrine\Bundle\MongoDBBundle;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Bundle\MongoDBBundle\DependencyInjection\Compiler\CreateHydratorDirectoryPass;
 use Doctrine\Bundle\MongoDBBundle\DependencyInjection\Compiler\CreateProxyDirectoryPass;
 use Doctrine\Bundle\MongoDBBundle\DependencyInjection\DoctrineMongoDBExtension;
+use Doctrine\Common\Util\ClassUtils;
 use Symfony\Bridge\Doctrine\DependencyInjection\CompilerPass\DoctrineValidationPass;
 use Symfony\Bridge\Doctrine\DependencyInjection\CompilerPass\RegisterEventListenersAndSubscribersPass;
 use Symfony\Bridge\Doctrine\DependencyInjection\Security\UserProvider\EntityFactory;
@@ -16,13 +15,10 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Doctrine MongoDB ODM bundle.
- *
- * @author Bulat Shakirzyanov <mallluhuct@gmail.com>
- * @author Kris Wallsmith <kris@symfony.com>
- * @author Jonathan H. Wage <jonwage@gmail.com>
  */
 class DoctrineMongoDBBundle extends Bundle
 {
+    /** @var callable */
     private $autoloader;
 
     public function build(ContainerBuilder $container)
@@ -48,28 +44,27 @@ class DoctrineMongoDBBundle extends Bundle
         // when the ODM is used.
         if ($this->container->hasParameter('doctrine_mongodb.odm.proxy_namespace')) {
             $namespace = $this->container->getParameter('doctrine_mongodb.odm.proxy_namespace');
-            $dir = $this->container->getParameter('doctrine_mongodb.odm.proxy_dir');
+            $dir       = $this->container->getParameter('doctrine_mongodb.odm.proxy_dir');
             // See https://github.com/symfony/symfony/pull/3419 for usage of
             // references
             $container =& $this->container;
 
-            $this->autoloader = function($class) use ($namespace, $dir, &$container) {
-                if (0 === strpos($class, $namespace)) {
+            $this->autoloader = function ($class) use ($namespace, $dir, &$container) {
+                if (strpos($class, $namespace) === 0) {
                     $fileName = str_replace('\\', '', substr($class, strlen($namespace) +1));
-                    $file = $dir.DIRECTORY_SEPARATOR.$fileName.'.php';
+                    $file     = $dir . DIRECTORY_SEPARATOR . $fileName . '.php';
 
-                    if (!is_file($file) && $container->getParameter('doctrine_mongodb.odm.auto_generate_proxy_classes')) {
+                    if (! is_file($file) && $container->getParameter('doctrine_mongodb.odm.auto_generate_proxy_classes')) {
                         $originalClassName = ClassUtils::getRealClass($class);
-                        $registry = $container->get('doctrine_mongodb');
+                        $registry          = $container->get('doctrine_mongodb');
 
                         // Tries to auto-generate the proxy file
                         foreach ($registry->getManagers() as $dm) {
-
                             if ($dm->getConfiguration()->getAutoGenerateProxyClasses()) {
                                 $classes = $dm->getMetadataFactory()->getAllMetadata();
 
                                 foreach ($classes as $classMetadata) {
-                                    if ($classMetadata->name == $originalClassName) {
+                                    if ($classMetadata->name === $originalClassName) {
                                         $dm->getProxyFactory()->generateProxyClasses([$classMetadata]);
                                     }
                                 }
@@ -90,7 +85,7 @@ class DoctrineMongoDBBundle extends Bundle
 
     public function shutdown()
     {
-        if (null !== $this->autoloader) {
+        if ($this->autoloader !== null) {
             spl_autoload_unregister($this->autoloader);
             $this->autoloader = null;
         }
